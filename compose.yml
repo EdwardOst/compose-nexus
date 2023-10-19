@@ -1,0 +1,31 @@
+name: nexus
+
+services:
+
+  nexus_server:
+    image: ${NEXUS_IMAGE}:${NEXUS_VERSION}
+    restart: always
+#   no environment settings
+#   environment:
+    expose:
+      # The nexus port is exposed to other linked services within the docker network
+      - ${NEXUS_CONTAINER_PORT}
+    ports:
+      # The nexus port exposed on the host is mapped to ip 127.0.0.1 so it should only be visible to the host and not other host network systems.
+      # If the host port is not specified or the empty string a port will be dynamically assigned.
+      - target: ${NEXUS_CONTAINER_PORT}
+        published: ${NEXUS_HOST_PORT}
+        host_ip: ${NEXUS_HOST_IP}
+        protocol: tcp
+        mode: host
+    volumes:
+      - nexus-data:/nexus-data
+    labels:
+      com.qlik.presales.description: "nexus"
+      com.qlik.presales.author: "ed.ost@qlik.com"
+      com.qlik.presales.source: "https://hub.docker.com/r/sonatype/nexus3"
+
+volumes:
+  nexus-data:
+    labels:
+      com.qlik.presales.description: "nexus storage"
